@@ -40,7 +40,10 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
     res.header('auth-token', token).json(user);
 });
-exports.profile = (req, res) => {
-    res.json({ ok: 'true' });
-};
+exports.profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.userId, { password: 0 });
+    if (!user)
+        return res.status(404).json({ message: 'No User Found' });
+    res.json(user);
+});
 //# sourceMappingURL=auth.js.map
