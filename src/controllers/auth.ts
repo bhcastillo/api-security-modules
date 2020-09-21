@@ -17,8 +17,15 @@ export const signUp = async (req: Request, res: Response) => {
 
   res.header('auth-token', token).json(saveUser);
 };
-export const signIn = (req: Request, res: Response) => {
-  res.json({ ok: 'true' });
+export const signIn = async (req: Request, res: Response) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(404).json({ message: 'Email or password is wrong' });
+  const correctPassword: boolean = await user.validatePassword(req.body.password);
+  if (!correctPassword) return res.status(403).json({ message: 'Invalid Password' });
+  const token: string = jwt.sign({ _id: user.id }, process.env.SECRET_TOKEN || 'secretToken', {
+    expiresIn: 60 * 60 * 24,
+  });
+  res.header('auth-token', token).json(user);
 };
 export const profile = (req: Request, res: Response) => {
   res.json({ ok: 'true' });

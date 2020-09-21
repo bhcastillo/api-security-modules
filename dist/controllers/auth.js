@@ -28,9 +28,18 @@ exports.signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = jsonwebtoken_1.default.sign({ _id: saveUser._id }, process.env.SECRET_TOKEN || 'secretToken');
     res.header('auth-token', token).json(saveUser);
 });
-exports.signIn = (req, res) => {
-    res.json({ ok: 'true' });
-};
+exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findOne({ email: req.body.email });
+    if (!user)
+        return res.status(404).json({ message: 'Email or password is wrong' });
+    const correctPassword = yield user.validatePassword(req.body.password);
+    if (!correctPassword)
+        return res.status(403).json({ message: 'Invalid Password' });
+    const token = jsonwebtoken_1.default.sign({ _id: user.id }, process.env.SECRET_TOKEN || 'secretToken', {
+        expiresIn: 60 * 60 * 24,
+    });
+    res.header('auth-token', token).json(user);
+});
 exports.profile = (req, res) => {
     res.json({ ok: 'true' });
 };
