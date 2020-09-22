@@ -32,7 +32,6 @@ export const createSuperAdminstrator = async () => {
       password: 'superadministrator',
       role: roleSuperAdministrator?._id,
     });
-
     console.log('Super Administrator created!');
   }
 };

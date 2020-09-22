@@ -1,14 +1,25 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import Role from '../models/Role';
 
 import User, { IUser } from '../models/User';
 
 export const signUp = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
   //saving a new user
-  const user: IUser = new User({ username, email, password });
-  user.password = await user.encryptPassword(user.password);
-  const saveUser = await user.save();
+  const newUser: IUser = new User({ username, email, password });
+  newUser.password = await newUser.encryptPassword(newUser.password);
+  //Searching _id Role
+  if (!role) {
+    const roleUser = await Role.findOne({ name: 'User' });
+    newUser.role = roleUser?._id;
+  } else {
+    const foundRole = await Role.findOne({ name: role });
+    if (!foundRole) return res.status(400).json({ message: 'Role Not Found' });
+    newUser.role = foundRole?._id;
+  }
+  //Saving the User Object in Mogodb
+  const saveUser = await newUser.save();
   //token
   const token: string = jwt.sign({ _id: saveUser._id }, process.env.SECRET_TOKEN || 'secretToken');
 
