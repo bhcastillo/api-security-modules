@@ -5,10 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
-const auth_routes_1 = __importDefault(require("./router/auth.routes"));
 const dotenv_1 = __importDefault(require("dotenv"));
+//Routes
+const auth_routes_1 = __importDefault(require("./router/auth.routes"));
+//initial Setup
+const initialSetup_1 = require("./libs/initialSetup");
+// environment  variables
 dotenv_1.default.config();
 const app = express_1.default();
+initialSetup_1.createRoles();
+initialSetup_1.createSuperAdminstrator();
 //settings
 app.set('PORT', 3000);
 //middlewares
