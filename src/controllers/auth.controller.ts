@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import Role from '../models/Role';
 
+import Role from '../models/Role';
 import User, { IUser } from '../models/User';
 
 export const signUp = async (req: Request, res: Response) => {
@@ -14,6 +14,12 @@ export const signUp = async (req: Request, res: Response) => {
     const roleUser = await Role.findOne({ name: 'User' });
     newUser.role = roleUser?._id;
   } else {
+    //validation There can only be one Super Administrator
+    if (role === 'Super Administrator') {
+      res.status(401).json({ message: 'There can only be one Super Administrator' });
+      return;
+    }
+    //searching Role
     const foundRole = await Role.findOne({ name: role });
     if (!foundRole) return res.status(400).json({ message: 'Role Not Found' });
     newUser.role = foundRole?._id;
@@ -27,7 +33,7 @@ export const signUp = async (req: Request, res: Response) => {
 };
 export const signIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate('role');
 
   if (!user) return res.status(404).json({ message: 'Email or password is wrong' });
 
