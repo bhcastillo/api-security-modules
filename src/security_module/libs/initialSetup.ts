@@ -1,5 +1,6 @@
 import Role, { IRole } from '../models/Role';
 import User from '../models/User';
+import { IUser } from '../models/User';
 
 export const createRoles = async () => {
   try {
@@ -20,18 +21,20 @@ export const createRoles = async () => {
 };
 export const createSuperAdminstrator = async () => {
   //Check for an existing 'Super Administrator'
-  const user = await User.findOne({ email: 'superAdministrator@localhost' });
+  const user = await User.findOne({ email: 'superAdministrator@localhost.com' });
   //Get role_id of Super Administrator
   const roleSuperAdministrator = await Role.findOne({ name: 'Super Administrator' });
 
   if (!user && roleSuperAdministrator) {
     //Create a Super Administrator
-    await User.create({
+    const newUser: IUser = new User({
       username: 'Super Administrator',
-      email: 'superAdministrator@localhost',
+      email: 'superAdministrator@localhost.com',
       password: 'superadministrator',
       role: roleSuperAdministrator?._id,
     });
+    newUser.password = await newUser.encryptPassword(newUser.password);
+    await newUser.save();
     console.log('Super Administrator created!');
   }
 };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import User, { IUser } from '../models/User';
+import User, { IUser } from '../../security_module/models/User';
 
 export const signUp = async (req: Request, res: Response) => {
   const { username, email, password, role } = req.body;
@@ -27,6 +27,7 @@ export const signIn = async (req: Request, res: Response) => {
   const token: string = jwt.sign({ _id: user.id }, process.env.SECRET_TOKEN || 'secretToken', {
     expiresIn: 86400,
   });
+  user.password = '';
   res.header('auth-token', token).json(user);
 };
 export const profile = async (req: Request, res: Response) => {
