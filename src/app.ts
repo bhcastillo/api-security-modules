@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import morgan from 'morgan';
+import morgan, { token } from 'morgan';
 import dotenv from 'dotenv';
 //Routes
 import authRoutes from './security_module/router/auth.routes';
@@ -7,6 +7,7 @@ import productsRoutes from './product_module/routes/products.routes';
 
 //initial Setup
 import { createRoles, createSuperAdminstrator } from './security_module/libs/initialSetup';
+import { tokenValidation } from './security_module/middlewares/verifyToken';
 // environment  variables
 dotenv.config();
 
@@ -21,6 +22,6 @@ app.use(express.json());
 app.use(morgan('dev'));
 //routes
 app.use('/api/auth', authRoutes);
-app.use('/api', productsRoutes);
+app.use('/api', tokenValidation, productsRoutes);
 
 export default app;

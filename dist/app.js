@@ -11,6 +11,7 @@ const auth_routes_1 = __importDefault(require("./security_module/router/auth.rou
 const products_routes_1 = __importDefault(require("./product_module/routes/products.routes"));
 //initial Setup
 const initialSetup_1 = require("./security_module/libs/initialSetup");
+const verifyToken_1 = require("./security_module/middlewares/verifyToken");
 // environment  variables
 dotenv_1.default.config();
 const app = express_1.default();
@@ -23,6 +24,6 @@ app.use(express_1.default.json());
 app.use(morgan_1.default('dev'));
 //routes
 app.use('/api/auth', auth_routes_1.default);
-app.use('/api', products_routes_1.default);
+app.use('/api', verifyToken_1.tokenValidation, products_routes_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

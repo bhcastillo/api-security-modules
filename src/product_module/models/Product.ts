@@ -12,7 +12,6 @@ const productSchema = new Schema(
     name: {
       type: String,
       unique: true,
-      required: true,
       lowercase: true,
     },
     category: {
@@ -25,7 +24,7 @@ const productSchema = new Schema(
       type: Number,
       required: true,
     },
-    imgUrl: {
+    imgURL: {
       type: String,
       unique: true,
       required: true,
